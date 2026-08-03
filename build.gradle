@@ -1,0 +1,70 @@
+plugins {
+    id 'java'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+group = 'org.example'
+version = '0.0.1-SNAPSHOT'
+description = 'demo'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+// ========== 所有版本统一集中管理区 ==========
+ext {
+    // Spring
+    set('springBootVersion', "3.2.12")
+    set('springAiVersion', "2.0.0-M2")
+
+    // LangChain4j
+    set('langchain4jVersion', "1.10.0-beta18")
+
+    // 第三方组件
+    set('lombokVersion', "1.18.20")
+    set('commonsCollections4Version', "4.4")
+}
+
+dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
+    implementation("org.springframework.boot:spring-boot-starter-webflux:${springBootVersion}")
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb:${springBootVersion}")
+
+    //千问
+    implementation("dev.langchain4j:langchain4j-open-ai-spring-boot-starter:${langchain4jVersion}")
+    //implementation("dev.langchain4j:langchain4j-community-dashscope-spring-boot-starter:${langchain4jVersion}")
+    implementation("dev.langchain4j:langchain4j-spring-boot-starter:${langchain4jVersion}")
+    implementation("dev.langchain4j:langchain4j-embeddings-bge-small-zh-v15:${langchain4jVersion}")
+    implementation("dev.langchain4j:langchain4j-reactor:${langchain4jVersion}")
+    implementation("dev.langchain4j:langchain4j-document-parser-apache-poi:${langchain4jVersion}")
+
+    implementation("org.apache.commons:commons-collections4:${commonsCollections4Version}")
+
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
